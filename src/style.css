@@ -1,0 +1,32 @@
+html, body, #mapid {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+#mapid {
+    /* z-index: 0; */
+    max-height: 600px;
+}
+
+.marker {
+    text-align      : center;
+    color           : white;
+    font-size       : 16;
+    border-radius   : 8px;
+    box-shadow      : 8px 8px 8px rgba( 0, 0, 0, 0.4 );
+}
+
+.red {
+    background      : red;
+}
+
+.blue {
+    background      : blue;
+}
+
+.container {
+    margin-top: 10px;
+}
