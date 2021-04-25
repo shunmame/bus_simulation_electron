@@ -4,6 +4,8 @@ var db = new sqlite3.Database(__dirname + "/sqlite_db/dentetsuDB.db");
 var GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 var request = require('request');
 
+var realtime_markers = []
+
 window.onload = () => {
     global.L = require('leaflet');
 
@@ -24,6 +26,31 @@ window.onload = () => {
 
     db.close()
 
+    get_gtfs_realtime()
+}
+
+contextBridge.exposeInMainWorld(
+    "api", {
+    //rendererからの送信用//
+    send: (channel, data) => {
+        if (channel == "add_marker") {
+            const redMarker = { icon: global.L.divIcon({ className: 'red marker', iconSize: [16, 16] }) }
+            global.L.marker([32.5648981, 130.6574741], redMarker).addTo(global.map).bindPopup('Imperial Palace.').openPopup()
+        }
+        else if (channel == "update_marker") {
+            update_gtfs_realtime()
+        }
+        else {
+            ipcRenderer.send(channel, data);
+        }
+    },
+    //rendererでの受信用, funcはコールバック関数//
+    on: (channel, func) => {
+        ipcRenderer.on(channel, (event, ...args) => func(...args));
+    }
+});
+
+function get_gtfs_realtime() {
     const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
     var requestSettings = {
         method: 'GET',
@@ -36,27 +63,18 @@ window.onload = () => {
             feed.entity.forEach(function (entity) {
                 if (entity.vehicle) {
                     // console.log(Object.keys(entity.vehicle.position));
-                    L.marker([entity.vehicle.position.latitude, entity.vehicle.position.longitude], blueMarker).addTo(map).bindPopup("BUS").openPopup()
+                    realtime_marker = L.marker([entity.vehicle.position.latitude, entity.vehicle.position.longitude], blueMarker).addTo(map).bindPopup("BUS").openPopup()
+                    realtime_markers.push(realtime_marker)
                 }
             });
         }
     });
 }
 
-contextBridge.exposeInMainWorld(
-    "api", {
-    //rendererからの送信用//
-    send: (channel, data) => {
-        if (channel == "add_marker") {
-            const redMarker = { icon: global.L.divIcon({ className: 'red marker', iconSize: [16, 16] }) }
-            global.L.marker([32.5648981, 130.6574741], redMarker).addTo(global.map).bindPopup('Imperial Palace.').openPopup()
-        }
-        else {
-            ipcRenderer.send(channel, data);
-        }
-    },
-    //rendererでの受信用, funcはコールバック関数//
-    on: (channel, func) => {
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
+function update_gtfs_realtime() {
+    for (let i = 0; i < realtime_markers.length; i++) {
+        L.removeLayer(realtime_markers[i])
     }
-});
+    realtime_markers = []
+    get_gtfs_realtime()
+}

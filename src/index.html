@@ -35,14 +35,16 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <button id="button1">追加</button>
+                <textarea class="form-control"></textarea>
             </div>
             <div class="col">
-                <button>aaa</button>
+                <button id="button1">追加</button>
             </div>
         </div>
     </div>
 
+    <!-- my file -->
+    <script src="bus_simulation.js"></script>
 
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -55,20 +57,5 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 </body>
-
-<script type="text/javascript">
-    //適当なプログラム
-    const button1 = document.getElementById("button1");
-
-    // 送信
-    button1.addEventListener("click", (e) => {
-        window.api.send("add_marker");
-    });
-
-    // 受信
-    window.api.on("async-reply", (arg) => {
-        console.log(arg);
-    });
-</script>
 
 </html>
