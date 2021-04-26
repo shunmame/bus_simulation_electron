@@ -33,6 +33,6 @@ app.on(
     () => process.platform !== 'darwin' && app.quit()
 )
 
-ipcMain.on("keyword", function (event, args) {
-    // event.sender.send("keyword");
+ipcMain.on("gtfs_RT_data", function (event, args) {
+    event.sender.send("gtfs_RT_data");
 })
