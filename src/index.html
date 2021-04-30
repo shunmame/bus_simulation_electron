@@ -29,14 +29,32 @@
 </head>
 
 <body>
+
     <div id="mapid"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <textarea class="form-control" id="gtfs_RT_data"></textarea>
+    <div class="content">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="item1-tab" data-toggle="tab" href="#item1" role="tab"
+                    aria-controls="item1" aria-selected="true">Item#1</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="item2-tab" data-toggle="tab" href="#item2" role="tab" aria-controls="item2"
+                    aria-selected="false">Item#2</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="item3-tab" data-toggle="tab" href="#item3" role="tab" aria-controls="item3"
+                    aria-selected="false">Item#3</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="item1" role="tabpanel" aria-labelledby="item1-tab">This is a text
+                of item#1.
+                <div id="entity_table table">a</div>
             </div>
-            <div class="col">
-                <button id="button1">追加</button>
+            <div class="tab-pane fade" id="item2" role="tabpanel" aria-labelledby="item2-tab">This is a text of item#2.
+                <div id="entity_table table">b</div>
+            </div>
+            <div class="tab-pane fade" id="item3" role="tabpanel" aria-labelledby="item3-tab">This is a text of item#3.
             </div>
         </div>
     </div>

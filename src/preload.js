@@ -62,25 +62,7 @@ function show_gtfs_realtime() {
                     realtime_markers.push(realtime_marker)
                 }
             });
-            console.log(feed)
             ipcRenderer.send("gtfs_RT_data", feed);
-        }
-    });
-}
-
-function get_gtfs_realtime() {
-    const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
-    var requestSettings = {
-        method: 'GET',
-        url: 'http://www3.unobus.co.jp/GTFS/GTFS_RT-VP.bin',
-        encoding: null
-    };
-    request(requestSettings, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            var feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-
-            // return JSON.stringify(feed);
-            ipcRenderer.on("gtfs_RT_data", feed);
         }
     });
 }
