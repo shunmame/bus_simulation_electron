@@ -62,7 +62,8 @@ function show_gtfs_realtime() {
                     realtime_markers.push(realtime_marker)
                 }
             });
-            // ipcRenderer.on("gtfs_RT_data",);
+            console.log(feed)
+            ipcRenderer.send("gtfs_RT_data", feed);
         }
     });
 }
@@ -77,8 +78,9 @@ function get_gtfs_realtime() {
     request(requestSettings, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             var feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-            
-            return JSON.stringify(feed);
+
+            // return JSON.stringify(feed);
+            ipcRenderer.on("gtfs_RT_data", feed);
         }
     });
 }

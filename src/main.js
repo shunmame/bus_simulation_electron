@@ -34,5 +34,5 @@ app.on(
 )
 
 ipcMain.on("gtfs_RT_data", function (event, args) {
-    event.sender.send("gtfs_RT_data");
+    event.sender.send("gtfs_RT_data", args);
 })
