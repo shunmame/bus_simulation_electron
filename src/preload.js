@@ -9,7 +9,7 @@ var realtime_markers = []
 window.onload = () => {
     global.L = require('leaflet');
 
-    global.map = L.map('mapid').setView([32.8067698, 130.7015545], 14);
+    global.map = L.map('mapid').setView([34.6657429, 133.9306472], 14);
 
     L.tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
