@@ -35,7 +35,8 @@ function show_gtfs_realtime_table(RT_data) {
         th.textContent = colum_name[i]
         tr.appendChild(th)
     }
-    table.appendChild(thead.appendChild(tr))
+    thead.appendChild(tr)
+    table.appendChild(thead)
 
     for (var i = 0; i < Object.keys(RT_data.entity).length; i++) {
         var tr = document.createElement("tr")
@@ -54,5 +55,4 @@ function show_gtfs_realtime_table(RT_data) {
 
         table.appendChild(tr)
     }
-    document.getElementById("entity_table").appendChild(table)
 }

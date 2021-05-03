@@ -9,7 +9,7 @@ body {
 #mapid {
     /* z-index: 0; */
     max-height: 1000px;
-    max-width: 1000px;
+    max-width: 700px;
 }
 
 .marker {
@@ -30,6 +30,12 @@ body {
 
 .content {
     position: absolute;
-    left: 1020px;
+    left: 720px;
     top: 0;
+    width: calc(100% - 720px);
+    height: 100%;
+}
+
+#entity_table {
+    margin-top: 10px;
 }
