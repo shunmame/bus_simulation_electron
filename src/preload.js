@@ -7,6 +7,8 @@ var request = require('request');
 var realtime_markers = []
 
 window.onload = () => {
+    // open("./setting.html", '', 'width=300,height=300')
+
     global.L = require('leaflet');
 
     global.map = L.map('mapid').setView([34.6657429, 133.9306472], 14);
