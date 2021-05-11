@@ -7,8 +7,6 @@ var request = require('request');
 var realtime_markers = []
 
 window.onload = () => {
-    // open("./setting.html", '', 'width=300,height=300')
-
     global.L = require('leaflet');
 
     global.map = L.map('mapid').setView([34.6657429, 133.9306472], 14);
@@ -21,7 +19,6 @@ window.onload = () => {
 
     db.serialize(function () {
         db.each("select stop_name, stop_lat, stop_lon from stops", function (err, row) {
-            // console.log(row.stop_name);
             L.marker([row.stop_lat, row.stop_lon], redMarker).addTo(map).bindPopup(row.stop_name)//.openPopup()
         })
     })
@@ -37,6 +34,9 @@ contextBridge.exposeInMainWorld(
     send: (channel, data) => {
         if (channel == "update_marker") {
             update_gtfs_realtime()
+        }
+        else if (channel == "start") {
+            console.log(data)
         }
         else {
             ipcRenderer.send(channel, data);
