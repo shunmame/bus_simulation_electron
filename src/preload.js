@@ -12,24 +12,19 @@ window.onload = () => {
 
 contextBridge.exposeInMainWorld(
     "api", {
-    //rendererからの送信用//
-    send: (channel, data) => {
-        if (channel == "update_marker") {
-            update_gtfs_realtime()
+        // 受信
+        update_marker: () => update_gtfs_realtime(),
+        get_RT_data: () => ipcRenderer.on("get_RT_data", (event, arg) => arg),
+
+        // 送信
+        on: (channel, func) => {
+            if(channel == "send_RT_URL") {
+                console.log("start")
+            }
+            else {
+                ipcRenderer.on(channel, (event, ...args) => func(...args))
+            }
         }
-        else {
-            ipcRenderer.send(channel, data);
-        }
-    },
-    //rendererでの受信用, funcはコールバック関数//
-    on: (channel, func) => {
-        if(channel == "start") {
-            console.log(...args)
-        }
-        else {
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
-        }
-    }
 });
 
 function show_map() {
@@ -53,12 +48,10 @@ function show_map() {
 }
 
 function show_gtfs_realtime() {
-    console.log("----")
-    console.log(global.RT_URL)
     const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
     var requestSettings = {
         method: 'GET',
-        url: global.RT_URL,
+        url: "http://www3.unobus.co.jp/GTFS/GTFS_RT-VP.bin",
         encoding: null
     };
     request(requestSettings, function (error, response, body) {
@@ -70,7 +63,7 @@ function show_gtfs_realtime() {
                     realtime_markers.push(realtime_marker)
                 }
             });
-            ipcRenderer.send("gtfs_RT_data", feed);
+            ipcRenderer.send("get_RT_data", feed);
         }
     });
 }

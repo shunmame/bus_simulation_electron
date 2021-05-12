@@ -3,12 +3,12 @@ window.onload = function () {
 }
 
 // 受信
-window.api.on("gtfs_RT_data", (arg) => {
+window.api.on("send_RT_data", (arg) => {
     show_gtfs_realtime_table(arg)
 });
 
 function update_gtfs_realtime() {
-    window.api.send("update_marker");
+    window.api.update_marker();
     console.log("update")
 }
 

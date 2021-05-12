@@ -16,8 +16,8 @@ const createWindow = () => {
     )
 
     // 開発ツールを有効化
-    mainWindow.webContents.openDevTools({ mode: "detach" });
-    
+    // mainWindow.webContents.openDevTools({ mode: "detach" });
+    mainWindow.loadFile('index.html')
 
     const subWindow = new BrowserWindow({
         width: 600,
@@ -32,8 +32,8 @@ const createWindow = () => {
     });
     // subWindow.on('close', () => console.log('BrowserWindow.close'));
 
-    // subWindow.webContents.openDevTools({ mode: "detach" });
-    subWindow.loadFile('setting.html');mainWindow.loadFile('index.html')
+    subWindow.webContents.openDevTools({ mode: "detach" });
+    subWindow.loadFile('setting.html')
 }
 
 app.whenReady().then(() => {
@@ -49,10 +49,10 @@ app.on(
     () => process.platform !== 'darwin' && app.quit()
 )
 
-ipcMain.on("gtfs_RT_data", function (event, args) {
-    event.sender.send("gtfs_RT_data", args);
+ipcMain.on("get_RT_data", function (event, args) {
+    event.sender.send("send_RT_data", args);
 })
 
 ipcMain.on("start", function (event, arg) {
-    event.sender.send("start", arg)
+    event.reply("send_RT_URL", arg)
 })
