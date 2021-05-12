@@ -39,3 +39,19 @@ body {
 #entity_table {
     margin-top: 10px;
 }
+
+#entity_table {
+    display: block;
+    overflow-y: scroll;
+    height: 790px;
+    border-collapse: collapse;
+}
+
+#entity_table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: white;
+    border-top:#FFFFFF;
+    width: 38%;
+}

@@ -7,8 +7,33 @@ var request = require('request');
 var realtime_markers = []
 
 window.onload = () => {
-    global.L = require('leaflet');
+    show_map()
+}
 
+contextBridge.exposeInMainWorld(
+    "api", {
+    //rendererからの送信用//
+    send: (channel, data) => {
+        if (channel == "update_marker") {
+            update_gtfs_realtime()
+        }
+        else {
+            ipcRenderer.send(channel, data);
+        }
+    },
+    //rendererでの受信用, funcはコールバック関数//
+    on: (channel, func) => {
+        if(channel == "start") {
+            console.log(...args)
+        }
+        else {
+        ipcRenderer.on(channel, (event, ...args) => func(...args));
+        }
+    }
+});
+
+function show_map() {
+    global.L = require('leaflet');
     global.map = L.map('mapid').setView([34.6657429, 133.9306472], 14);
 
     L.tileLayer(
@@ -22,37 +47,18 @@ window.onload = () => {
             L.marker([row.stop_lat, row.stop_lon], redMarker).addTo(map).bindPopup(row.stop_name)//.openPopup()
         })
     })
-
     db.close()
 
     show_gtfs_realtime()
 }
 
-contextBridge.exposeInMainWorld(
-    "api", {
-    //rendererからの送信用//
-    send: (channel, data) => {
-        if (channel == "update_marker") {
-            update_gtfs_realtime()
-        }
-        else if (channel == "start") {
-            console.log(data)
-        }
-        else {
-            ipcRenderer.send(channel, data);
-        }
-    },
-    //rendererでの受信用, funcはコールバック関数//
-    on: (channel, func) => {
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
-    }
-});
-
 function show_gtfs_realtime() {
+    console.log("----")
+    console.log(global.RT_URL)
     const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
     var requestSettings = {
         method: 'GET',
-        url: 'http://www3.unobus.co.jp/GTFS/GTFS_RT-VP.bin',
+        url: global.RT_URL,
         encoding: null
     };
     request(requestSettings, function (error, response, body) {

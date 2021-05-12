@@ -16,9 +16,8 @@ const createWindow = () => {
     )
 
     // 開発ツールを有効化
-    // mainWindow.webContents.openDevTools({ mode: "detach" });
-
-    mainWindow.loadFile('index.html')
+    mainWindow.webContents.openDevTools({ mode: "detach" });
+    
 
     const subWindow = new BrowserWindow({
         width: 600,
@@ -26,14 +25,15 @@ const createWindow = () => {
         parent: mainWindow,
         resizable: false,
         webPreferences: {
-            preload: __dirname + '/preload.js',
+            preload: __dirname + '/preload_sub.js',
             nodeIntegration: false,
             contextIsolation: true
         }
     });
+    // subWindow.on('close', () => console.log('BrowserWindow.close'));
 
-    subWindow.webContents.openDevTools({ mode: "detach" });
-    subWindow.loadFile('setting.html')
+    // subWindow.webContents.openDevTools({ mode: "detach" });
+    subWindow.loadFile('setting.html');mainWindow.loadFile('index.html')
 }
 
 app.whenReady().then(() => {
@@ -54,5 +54,5 @@ ipcMain.on("gtfs_RT_data", function (event, args) {
 })
 
 ipcMain.on("start", function (event, arg) {
-
+    event.sender.send("start", arg)
 })
