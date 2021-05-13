@@ -1,8 +1,10 @@
 const { app, BrowserWindow } = require('electron')
 const { ipcMain } = require('electron')
 
+var mainWindow, subWindow;
+
 const createWindow = () => {
-    const mainWindow = new BrowserWindow(
+    mainWindow = new BrowserWindow(
         {
             width: 1400,
             height: 1000,
@@ -16,10 +18,10 @@ const createWindow = () => {
     )
 
     // 開発ツールを有効化
-    // mainWindow.webContents.openDevTools({ mode: "detach" });
+    mainWindow.webContents.openDevTools({ mode: "detach" });
     mainWindow.loadFile('index.html')
 
-    const subWindow = new BrowserWindow({
+    subWindow = new BrowserWindow({
         width: 600,
         height: 500,
         parent: mainWindow,
@@ -30,9 +32,9 @@ const createWindow = () => {
             contextIsolation: true
         }
     });
-    // subWindow.on('close', () => console.log('BrowserWindow.close'));
+    subWindow.on('close', () => console.log(global.RT_URL));
 
-    subWindow.webContents.openDevTools({ mode: "detach" });
+    // subWindow.webContents.openDevTools({ mode: "detach" });
     subWindow.loadFile('setting.html')
 }
 
@@ -53,6 +55,11 @@ ipcMain.on("get_RT_data", function (event, args) {
     event.sender.send("send_RT_data", args);
 })
 
+ipcMain.handle("get_RT_URL", function (event, arg) {
+    console.log("wwwwww")
+    return global.RT_URL
+})
+
 ipcMain.on("start", function (event, arg) {
-    event.reply("send_RT_URL", arg)
+    global.RT_URL = arg
 })

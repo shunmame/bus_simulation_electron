@@ -5,6 +5,7 @@ var GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 var request = require('request');
 
 var realtime_markers = []
+var RT_URL = ""
 
 window.onload = () => {
     show_map()
@@ -15,11 +16,12 @@ contextBridge.exposeInMainWorld(
         // 受信
         update_marker: () => update_gtfs_realtime(),
         get_RT_data: () => ipcRenderer.on("get_RT_data", (event, arg) => arg),
+        get_RT_URL: () => ipcRenderer.on("get_RT_URL"),
 
         // 送信
         on: (channel, func) => {
             if(channel == "send_RT_URL") {
-                console.log("start")
+                console.log("kjflajiejfal")
             }
             else {
                 ipcRenderer.on(channel, (event, ...args) => func(...args))
@@ -35,6 +37,13 @@ function show_map() {
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     ).addTo(map)
 
+    if (global.RT_URL){
+        plot_stops()
+        show_gtfs_realtime()
+    }
+}
+
+function plot_stops() {
     const redMarker = { icon: L.divIcon({ className: 'red marker', iconSize: [10, 10] }) }
 
     db.serialize(function () {
@@ -43,15 +52,15 @@ function show_map() {
         })
     })
     db.close()
-
-    show_gtfs_realtime()
 }
 
-function show_gtfs_realtime() {
+async function show_gtfs_realtime() {
+    RT_URL = await ipcRenderer.invoke("get_RT_URL");
+    console.log(RT_URL)
     const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
     var requestSettings = {
         method: 'GET',
-        url: "http://www3.unobus.co.jp/GTFS/GTFS_RT-VP.bin",
+        url: RT_URL,
         encoding: null
     };
     request(requestSettings, function (error, response, body) {
