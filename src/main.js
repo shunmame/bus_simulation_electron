@@ -56,7 +56,6 @@ ipcMain.on("get_RT_data", function (event, args) {
 })
 
 ipcMain.handle("get_RT_URL", function (event, arg) {
-    console.log("wwwwww")
     return global.RT_URL
 })
 

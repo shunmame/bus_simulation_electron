@@ -20,12 +20,7 @@ contextBridge.exposeInMainWorld(
 
         // 送信
         on: (channel, func) => {
-            if(channel == "send_RT_URL") {
-                console.log("kjflajiejfal")
-            }
-            else {
-                ipcRenderer.on(channel, (event, ...args) => func(...args))
-            }
+            ipcRenderer.on(channel, (event, ...args) => func(...args))
         }
 });
 
