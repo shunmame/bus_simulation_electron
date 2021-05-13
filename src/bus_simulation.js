@@ -1,10 +1,10 @@
-window.onload = function () {
-    setInterval(update_gtfs_realtime, 15000);
-}
-
 // 受信
 window.api.on("send_RT_data", (arg) => {
     show_gtfs_realtime_table(arg)
+});
+
+window.api.on("start_update", (arg) => {
+    setInterval(update_gtfs_realtime, 15000);
 });
 
 function update_gtfs_realtime() {

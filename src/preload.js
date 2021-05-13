@@ -19,10 +19,15 @@ contextBridge.exposeInMainWorld(
         get_RT_URL: () => ipcRenderer.on("get_RT_URL"),
 
         // 送信
-        on: (channel, func) => {
-            ipcRenderer.on(channel, (event, ...args) => func(...args))
-        }
+        on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args))
 });
+
+ipcRenderer.on('close_child_win', async (event, message) => {
+    RT_URL = await ipcRenderer.invoke("get_RT_URL");
+    ipcRenderer.send("start_update");
+    plot_stops()
+    show_gtfs_realtime()
+})
 
 function show_map() {
     global.L = require('leaflet');
@@ -31,11 +36,6 @@ function show_map() {
     L.tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     ).addTo(map)
-
-    if (global.RT_URL){
-        plot_stops()
-        show_gtfs_realtime()
-    }
 }
 
 function plot_stops() {
@@ -49,9 +49,7 @@ function plot_stops() {
     db.close()
 }
 
-async function show_gtfs_realtime() {
-    RT_URL = await ipcRenderer.invoke("get_RT_URL");
-    console.log(RT_URL)
+function show_gtfs_realtime() {
     const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
     var requestSettings = {
         method: 'GET',

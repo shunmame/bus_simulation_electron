@@ -3,5 +3,5 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld(
     "api", {
     // 受信
-    start: (arg) => {ipcRenderer.send("start", arg)},
+    set_RT_URL: (arg) => {ipcRenderer.send("set_RT_URL", arg)},
 });

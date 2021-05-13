@@ -1,5 +1,4 @@
-const { app, BrowserWindow } = require('electron')
-const { ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
 var mainWindow, subWindow;
 
@@ -27,12 +26,12 @@ const createWindow = () => {
         parent: mainWindow,
         resizable: false,
         webPreferences: {
-            preload: __dirname + '/preload_sub.js',
+            preload: __dirname + '/preload_setting.js',
             nodeIntegration: false,
             contextIsolation: true
         }
     });
-    subWindow.on('close', () => console.log(global.RT_URL));
+    subWindow.on('close', () => mainWindow.webContents.send("close_child_win"));
 
     // subWindow.webContents.openDevTools({ mode: "detach" });
     subWindow.loadFile('setting.html')
@@ -55,10 +54,14 @@ ipcMain.on("get_RT_data", function (event, args) {
     event.sender.send("send_RT_data", args);
 })
 
+ipcMain.on("start_update", function (event, args) {
+    event.sender.send("start_update");
+})
+
 ipcMain.handle("get_RT_URL", function (event, arg) {
     return global.RT_URL
 })
 
-ipcMain.on("start", function (event, arg) {
+ipcMain.on("set_RT_URL", function (event, arg) {
     global.RT_URL = arg
 })
