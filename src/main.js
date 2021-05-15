@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 
 var mainWindow, subWindow;
 
@@ -33,7 +33,7 @@ const createWindow = () => {
     });
     subWindow.on('close', () => mainWindow.webContents.send("close_child_win"));
 
-    // subWindow.webContents.openDevTools({ mode: "detach" });
+    subWindow.webContents.openDevTools({ mode: "detach" });
     subWindow.loadFile('setting.html')
 }
 
@@ -64,4 +64,22 @@ ipcMain.handle("get_RT_URL", function (event, arg) {
 
 ipcMain.on("set_RT_URL", function (event, arg) {
     global.RT_URL = arg
+})
+
+ipcMain.on("send_gtfs_zip", function (event) {
+    dialog.showOpenDialog(
+        subWindow,
+        {
+        filters: [{
+            name: "zip",
+            extensions: ["zip"]
+        }],
+        properties:[
+            'openFile' // ファイルの選択を許可
+        ]
+    }).then((result) => {
+        if(result.canceled) return
+        event.sender.send("send_zip_path", result.filePaths[0])
+        console.log(result.filePaths)
+    }).catch((err) => console.log(err))
 })
