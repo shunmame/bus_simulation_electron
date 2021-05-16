@@ -1,4 +1,8 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const node_zip = require('node-zip')
+const fs = require("fs")
+const csv = require("csv")
+const iconv = require('iconv-lite')
 
 var mainWindow, subWindow;
 
@@ -80,6 +84,23 @@ ipcMain.on("send_gtfs_zip", function (event) {
     }).then((result) => {
         if(result.canceled) return
         event.sender.send("send_zip_path", result.filePaths[0])
-        console.log(result.filePaths)
+        // console.log(result.filePaths)
+
+        fs.readFile(result.filePaths[0], "binary", function(err, data) {
+            if (err) throw err
+            var zip = new node_zip(data, {base64: false, checkCRC32: true})
+            for (var fname in zip.files) {
+                if (fname == "stops.txt") {
+                    var buf = new Buffer.from(zip.files["stops.txt"]._data, 'binary'); 
+                    var retStr = iconv.decode(buf, "utf8");
+                    // console.log(retStr.split("\n"))
+                    retStr.split("\n").forEach( function(row) {
+                        console.log(row)
+                    })
+                    
+                }
+            }
+        })
+
     }).catch((err) => console.log(err))
 })
