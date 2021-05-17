@@ -1,10 +1,12 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const node_zip = require('node-zip')
 const fs = require("fs")
-const csv = require("csv")
+// const csv = require("csv")
 const iconv = require('iconv-lite')
 
 var mainWindow, subWindow;
+var stops_list = []
+var RT_URL
 
 const createWindow = () => {
     mainWindow = new BrowserWindow(
@@ -63,11 +65,11 @@ ipcMain.on("start_update", function (event, args) {
 })
 
 ipcMain.handle("get_RT_URL", function (event, arg) {
-    return global.RT_URL
+    return RT_URL
 })
 
 ipcMain.on("set_RT_URL", function (event, arg) {
-    global.RT_URL = arg
+    RT_URL = arg
 })
 
 ipcMain.on("send_gtfs_zip", function (event) {
@@ -93,14 +95,29 @@ ipcMain.on("send_gtfs_zip", function (event) {
                 if (fname == "stops.txt") {
                     var buf = new Buffer.from(zip.files["stops.txt"]._data, 'binary'); 
                     var retStr = iconv.decode(buf, "utf8");
-                    // console.log(retStr.split("\n"))
-                    retStr.split("\n").forEach( function(row) {
-                        console.log(row)
+                    var columns
+                    retStr.split("\n").forEach( function(row, index) {
+                        if (index == 0) {
+                            columns = row.split(",")
+                        }
+                        else if (index != 0 && columns.length != 0) {
+                            var row_split = row.split(",")
+                            var stops_dict = {}
+                            for (var i = 0; i < columns.length; i++) {
+                                if (row_split[i]) stops_dict[columns[i].replace(/^\s+|\s+$/g,'')] = row_split[i].replace(/^\s+|\s+$/g,'')
+                                else stops_dict[columns[i].replace(/^\s+|\s+$/g,'')] = ""
+                            }
+                            stops_list.push(stops_dict)
+                        }
                     })
-                    
+                    // console.log(stops_list)
                 }
             }
         })
 
     }).catch((err) => console.log(err))
+})
+
+ipcMain.handle("get_gtfs_list", function (event, arg) {
+    return stops_list
 })

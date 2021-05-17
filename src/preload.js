@@ -6,6 +6,7 @@ var request = require('request');
 
 var realtime_markers = []
 var RT_URL = ""
+var stops_list
 
 window.onload = () => {
     show_map()
@@ -24,8 +25,10 @@ contextBridge.exposeInMainWorld(
 
 ipcRenderer.on('close_child_win', async (event, message) => {
     RT_URL = await ipcRenderer.invoke("get_RT_URL");
+    stops_list = await ipcRenderer.invoke("get_gtfs_list")
+    console.log(RT_URL)
     ipcRenderer.send("start_update");
-    plot_stops()
+    plot_stops_list()
     show_gtfs_realtime()
 })
 
@@ -38,7 +41,7 @@ function show_map() {
     ).addTo(map)
 }
 
-function plot_stops() {
+function plot_stops_db() {
     const redMarker = { icon: L.divIcon({ className: 'red marker', iconSize: [10, 10] }) }
 
     db.serialize(function () {
@@ -47,6 +50,14 @@ function plot_stops() {
         })
     })
     db.close()
+}
+
+function plot_stops_list() {
+    const redMarker = { icon: L.divIcon({ className: 'red marker', iconSize: [10, 10] }) }
+
+    stops_list.forEach( function(row) {
+        L.marker([row.stop_lat, row.stop_lon], redMarker).addTo(map).bindPopup(row.stop_name)
+    })
 }
 
 function show_gtfs_realtime() {
