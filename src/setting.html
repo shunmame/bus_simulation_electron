@@ -12,17 +12,44 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- my file -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="setting.css">
 </head>
 
 <body>
     <!-- <p>child</p> -->
     <div class="container">
-        <label>GTFS Realtime URL</label>
-        <input type="text" id="RT_URL" placeholder="http://*************/GTFS_RT-VP.[bin,pb]" class="form-control">
-
-        <input type="button" value="開始" id="start_button">
+        <div class="row">
+            <div class="col">
+                <label>GTFS Realtime URL</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p id="validate_url" class="validate_txt">入力してください</p>
+                <input type="text" id="RT_URL" placeholder="http://*************/GTFS_RT-VP.[bin,pb]"
+                    class="form-control">
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="row">
+            <div class="col">
+                <label>GTFS Static Zip File</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p id="validate_zip" class="validate_txt">ファイルを選択してください</p>
+                <input type="text" id="zip_path" class="form-control" readonly>
+            </div>
+            <div class="col-2">
+                <button id="file_open_button" type="button" class="text-center">参照</button>
+            </div>
+        </div>
+        <div class="spacer"></div>
     </div>
+    <footer>
+        <input type="button" value="開始" id="start_button" style="width:100%">
+    </footer>
 
     <!-- my file -->
     <script src="setting.js"></script>

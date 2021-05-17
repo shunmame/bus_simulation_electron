@@ -5,6 +5,8 @@ var GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 var request = require('request');
 
 var realtime_markers = []
+var RT_URL = ""
+var stops_list
 
 window.onload = () => {
     show_map()
@@ -12,25 +14,23 @@ window.onload = () => {
 
 contextBridge.exposeInMainWorld(
     "api", {
-    //rendererからの送信用//
-    send: (channel, data) => {
-        if (channel == "update_marker") {
-            update_gtfs_realtime()
-        }
-        else {
-            ipcRenderer.send(channel, data);
-        }
-    },
-    //rendererでの受信用, funcはコールバック関数//
-    on: (channel, func) => {
-        if(channel == "start") {
-            console.log(...args)
-        }
-        else {
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
-        }
-    }
+        // 受信
+        update_marker: () => update_gtfs_realtime(),
+        get_RT_data: () => ipcRenderer.on("get_RT_data", (event, arg) => arg),
+        get_RT_URL: () => ipcRenderer.on("get_RT_URL"),
+
+        // 送信
+        on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args))
 });
+
+ipcRenderer.on('close_child_win', async (event, message) => {
+    RT_URL = await ipcRenderer.invoke("get_RT_URL");
+    stops_list = await ipcRenderer.invoke("get_gtfs_list")
+    console.log(RT_URL)
+    ipcRenderer.send("start_update");
+    plot_stops_list()
+    show_gtfs_realtime()
+})
 
 function show_map() {
     global.L = require('leaflet');
@@ -39,7 +39,9 @@ function show_map() {
     L.tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     ).addTo(map)
+}
 
+function plot_stops_db() {
     const redMarker = { icon: L.divIcon({ className: 'red marker', iconSize: [10, 10] }) }
 
     db.serialize(function () {
@@ -48,17 +50,21 @@ function show_map() {
         })
     })
     db.close()
+}
 
-    show_gtfs_realtime()
+function plot_stops_list() {
+    const redMarker = { icon: L.divIcon({ className: 'red marker', iconSize: [10, 10] }) }
+
+    stops_list.forEach( function(row) {
+        L.marker([row.stop_lat, row.stop_lon], redMarker).addTo(map).bindPopup(row.stop_name)
+    })
 }
 
 function show_gtfs_realtime() {
-    console.log("----")
-    console.log(global.RT_URL)
     const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
     var requestSettings = {
         method: 'GET',
-        url: global.RT_URL,
+        url: RT_URL,
         encoding: null
     };
     request(requestSettings, function (error, response, body) {
@@ -70,7 +76,7 @@ function show_gtfs_realtime() {
                     realtime_markers.push(realtime_marker)
                 }
             });
-            ipcRenderer.send("gtfs_RT_data", feed);
+            ipcRenderer.send("get_RT_data", feed);
         }
     });
 }
