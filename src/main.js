@@ -23,7 +23,7 @@ const createWindow = () => {
     )
 
     // 開発ツールを有効化
-    mainWindow.webContents.openDevTools({ mode: "detach" });
+    // mainWindow.webContents.openDevTools({ mode: "detach" });
     mainWindow.loadFile('index.html')
 
     subWindow = new BrowserWindow({
