@@ -14,13 +14,14 @@ window.onload = () => {
 
 contextBridge.exposeInMainWorld(
     "api", {
-        // 受信
-        update_marker: () => update_gtfs_realtime(),
-        get_RT_data: () => ipcRenderer.on("get_RT_data", (event, arg) => arg),
-        get_RT_URL: () => ipcRenderer.on("get_RT_URL"),
+    // 受信
+    update_marker: () => update_gtfs_realtime(),
+    get_RT_data: () => ipcRenderer.send("get_RT_data", (event, arg) => arg),
+    get_RT_URL: () => ipcRenderer.send("get_RT_URL"),
+    open_child_window: () => ipcRenderer.send("open_child_window"),
 
-        // 送信
-        on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args))
+    // 送信
+    on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args))
 });
 
 ipcRenderer.on('close_child_win', async (event, message) => {
@@ -55,7 +56,7 @@ function plot_stops_db() {
 function plot_stops_list() {
     const redMarker = { icon: L.divIcon({ className: 'red marker', iconSize: [10, 10] }) }
 
-    stops_list.forEach( function(row) {
+    stops_list.forEach(function (row) {
         L.marker([row.stop_lat, row.stop_lon], redMarker).addTo(map).bindPopup(row.stop_name)
     })
 }

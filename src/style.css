@@ -34,6 +34,7 @@ body {
     top: 0;
     width: calc(100% - 720px);
     height: 100%;
+    padding: 10px;
 }
 
 #entity_table {

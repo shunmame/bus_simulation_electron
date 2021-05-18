@@ -5,12 +5,12 @@ document.getElementById("start_button").addEventListener("click", (e) => {
         window.api.set_RT_URL(RT_URL)
         window.close();
     }
-    
+
     if (!RT_URL) document.getElementById("validate_url").style.visibility = "visible"; else document.getElementById("validate_url").style.visibility = "hidden";
     if (!zip_path) document.getElementById("validate_zip").style.visibility = "visible"; else document.getElementById("validate_zip").style.visibility = "hidden";
 });
 
-document.querySelector("#file_open_button").addEventListener("click", async () => {
+document.querySelector("#file_open_button").addEventListener("click", () => {
     window.api.send_gtfs_zip()
 })
 

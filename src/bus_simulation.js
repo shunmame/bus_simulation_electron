@@ -1,4 +1,3 @@
-// 受信
 window.api.on("send_RT_data", (arg) => {
     show_gtfs_realtime_table(arg)
 });
@@ -11,6 +10,11 @@ function update_gtfs_realtime() {
     window.api.update_marker();
     console.log("update")
 }
+
+document.getElementById("add_gtfs_button").addEventListener("click", (e) => {
+    console.log("push")
+    window.api.open_child_window()
+});
 
 function show_gtfs_realtime_table(RT_data) {
     var table = document.getElementById("entity_table");
