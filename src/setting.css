@@ -1,10 +1,16 @@
+p {
+    margin-bottom: 0;
+}
+
 .container {
     padding: 4px;
     padding-top: 20px
 }
 
 .spacer {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed gray;
 }
 
 .validate_txt {
@@ -17,11 +23,6 @@
 
 #file_open_button {
     margin-top: 20px;
-}
-
-label {
-    font-size: 18px;
-    margin-bottom: 1px;
 }
 
 footer {
