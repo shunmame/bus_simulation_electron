@@ -3,6 +3,10 @@ const node_zip = require('node-zip')
 const fs = require("fs")
 const iconv = require('iconv-lite')
 
+require('electron-reload')(__dirname, {
+    electron: require('${__dirname}/../../node_modules/electron')
+});
+
 var mainWindow, subWindow;
 var stops_list = []
 var RT_URL
@@ -22,7 +26,7 @@ const createWindow = () => {
     )
 
     // 開発ツールを有効化
-    mainWindow.webContents.openDevTools({ mode: "detach" });
+    // mainWindow.webContents.openDevTools({ mode: "detach" });
     mainWindow.loadFile('index.html')
 
     subWindow = new BrowserWindow({
@@ -38,7 +42,7 @@ const createWindow = () => {
     });
     subWindow.on('close', () => mainWindow.webContents.send("close_child_win"));
 
-    // subWindow.webContents.openDevTools({ mode: "detach" });
+    subWindow.webContents.openDevTools({ mode: "detach" });
     subWindow.loadFile('setting.html')
 }
 
