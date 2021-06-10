@@ -41,14 +41,14 @@ body {
     margin-top: 10px;
 }
 
-#entity_table {
+[id$="-table"] {
     display: block;
     overflow-y: scroll;
-    height: 790px;
+    height: 760px;
     border-collapse: collapse;
 }
 
-#entity_table thead th {
+[id$="-table"] thead th {
     position: sticky;
     top: 0;
     z-index: 1;

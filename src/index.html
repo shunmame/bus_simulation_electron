@@ -34,29 +34,15 @@
     <div class="content">
         <input type="button" value="追加" id="add_gtfs_button" style="width:100%">
 
-        <ul class="nav nav-tabs" role="tablist">
+        <ul class="nav nav-tabs" role="tablist" id="tabs">
             <li class="nav-item">
                 <a class="nav-link active" id="item1-tab" data-toggle="tab" href="#item1" role="tab"
-                    aria-controls="item1" aria-selected="true">Item#1</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="item2-tab" data-toggle="tab" href="#item2" role="tab" aria-controls="item2"
-                    aria-selected="false">Item#2</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="item3-tab" data-toggle="tab" href="#item3" role="tab" aria-controls="item3"
-                    aria-selected="false">Item#3</a>
+                    aria-controls="item1" aria-selected="true">全般</a>
             </li>
         </ul>
 
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="item1" role="tabpanel" aria-labelledby="item1-tab">
-            </div>
-            <div class="tab-pane fade" id="item2" role="tabpanel" aria-labelledby="item2-tab">
-                <table id="entity_table" class="table table-striped"></table>
-            </div>
-            <div class="tab-pane fade" id="item3" role="tabpanel" aria-labelledby="item3-tab">This is a text of item#3.
-            </div>
+        <div class="tab-content" id="tab-content">
+            <div class="tab-pane fade show active" id="item1" role="tabpanel" aria-labelledby="item1-tab"></div>
         </div>
     </div>
 

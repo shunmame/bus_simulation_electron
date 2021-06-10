@@ -59,13 +59,10 @@ function plot_stops_from_list() {
 
     stops_list.forEach(function (row) {
         var Keys = Object.keys(row)
-        // console.log(row)
         if (row[Keys[4]] && row[Keys[5]] && row[Keys[2]]) {
-            // NaNが入ってるからその対処
-            // console.log(Number(row[Keys[4]].replace(/[\"]/g, "")), row[Keys[5]], row[Keys[2]])
             var stop_lat = Number(row[Keys[4]].replace(/[\"]/g, ""))
             var stop_lon = Number(row[Keys[5]].replace(/[\"]/g, ""))
-            var stop_name = Number(row[Keys[2]].replace(/[\"]/g, ""))
+            var stop_name = row[Keys[2]].replace(/[\"]/g, "")
             L.marker([stop_lat, stop_lon], redMarker).addTo(map).bindPopup(stop_name)
         }
     })
@@ -89,7 +86,7 @@ function show_gtfs_realtime(RT_URL) {
                 }
             });
             realtime_marker_dict[RT_URL] = realtime_markers
-            ipcRenderer.send("get_RT_data", feed);
+            ipcRenderer.send("get_RT_data", [RT_URL, feed]);
         }
     });
 }
