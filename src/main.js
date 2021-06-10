@@ -8,8 +8,10 @@ require('electron-reload')(__dirname, {
 });
 
 var mainWindow, subWindow;
-var stops_list = []
-var RT_URL
+var stopsList = []
+var tmp_GtfsRTData
+var gtfsRTDataList = []
+var staticGtfsDataDict = {}
 
 const createWindow = () => {
     mainWindow = new BrowserWindow(
@@ -26,12 +28,12 @@ const createWindow = () => {
     )
 
     // 開発ツールを有効化
-    // mainWindow.webContents.openDevTools({ mode: "detach" });
+    mainWindow.webContents.openDevTools({ mode: "detach" });
     mainWindow.loadFile('index.html')
 
     subWindow = new BrowserWindow({
         width: 600,
-        height: 500,
+        height: 600,
         parent: mainWindow,
         resizable: false,
         webPreferences: {
@@ -42,7 +44,7 @@ const createWindow = () => {
     });
     subWindow.on('close', () => mainWindow.webContents.send("close_child_win"));
 
-    subWindow.webContents.openDevTools({ mode: "detach" });
+    // subWindow.webContents.openDevTools({ mode: "detach" });
     subWindow.loadFile('setting.html')
 }
 
@@ -64,16 +66,45 @@ ipcMain.on("get_RT_data", function (event, args) {
 })
 
 ipcMain.on("start_update", function (event, args) {
-    event.sender.send("start_update");
+    event.sender.send("start_update", args);
 })
 
-ipcMain.handle("get_RT_URL", function () {
-    return RT_URL
+ipcMain.handle("get_new_RT_info", function () {
+    if (tmp_GtfsRTData) {
+        gtfsRTDataList.push(tmp_GtfsRTData)
+        var returnData = tmp_GtfsRTData
+        tmp_GtfsRTData = null
+        return returnData
+    }
+    else {
+        return false
+    }
 })
 
-ipcMain.on("set_RT_URL", function (event, arg) {
-    RT_URL = arg
+ipcMain.on("add_RT_data", function (event, args) {
+    tmp_GtfsRTData = args
 })
+
+function convert_stops_for_plot(stopsData) {
+    var buf = new Buffer.from(stopsData, 'binary');
+    var retStr = iconv.decode(buf, "utf8");
+    var columns
+    retStr.split("\n").forEach(function (row, index) {
+        if (index == 0) {
+            columns = row.split(",")
+        }
+        else if (index != 0 && columns.length != 0) {
+            var row_split = row.split(",")
+            var stops_dict = {}
+            for (var i = 0; i < columns.length; i++) {
+                if (row_split[i]) stops_dict[columns[i].replace(/^\s+|\s+$/g, '')] = row_split[i].replace(/^\s+|\s+$/g, '')
+                else stops_dict[columns[i].replace(/^\s+|\s+$/g, '')] = ""
+            }
+            stopsList.push(stops_dict)
+        }
+    })
+    return stopsList
+}
 
 ipcMain.on("send_gtfs_zip", function (event) {
     dialog.showOpenDialog(
@@ -89,46 +120,23 @@ ipcMain.on("send_gtfs_zip", function (event) {
         }).then((result) => {
             if (result.canceled) return
             event.sender.send("send_zip_path", result.filePaths[0])
-            // console.log(result.filePaths)
 
             fs.readFile(result.filePaths[0], "binary", function (err, data) {
                 if (err) throw err
                 var zip = new node_zip(data, { base64: false, checkCRC32: true })
-                for (var fname in zip.files) {
-                    if (fname == "stops.txt") {
-                        var buf = new Buffer.from(zip.files["stops.txt"]._data, 'binary');
-                        var retStr = iconv.decode(buf, "utf8");
-                        var columns
-                        retStr.split("\n").forEach(function (row, index) {
-                            if (index == 0) {
-                                columns = row.split(",")
-                            }
-                            else if (index != 0 && columns.length != 0) {
-                                var row_split = row.split(",")
-                                var stops_dict = {}
-                                for (var i = 0; i < columns.length; i++) {
-                                    if (row_split[i]) stops_dict[columns[i].replace(/^\s+|\s+$/g, '')] = row_split[i].replace(/^\s+|\s+$/g, '')
-                                    else stops_dict[columns[i].replace(/^\s+|\s+$/g, '')] = ""
-                                }
-                                stops_list.push(stops_dict)
-                            }
-                        })
-                        // console.log(stops_list)
-                    }
-                }
+                staticGtfsDataDict[result.filePaths[0]] = zip.files
             })
-
         }).catch((err) => console.log(err))
 })
 
-ipcMain.handle("get_gtfs_list", function () {
-    return stops_list
+ipcMain.handle("get_stops_list", function (event, zipPath) {
+    return convert_stops_for_plot(staticGtfsDataDict[zipPath]["stops.txt"]._data)
 })
 
 ipcMain.on("open_child_window", function () {
     subWindow = new BrowserWindow({
         width: 600,
-        height: 500,
+        height: 600,
         parent: mainWindow,
         resizable: false,
         webPreferences: {

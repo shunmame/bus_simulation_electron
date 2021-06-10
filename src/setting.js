@@ -4,10 +4,13 @@ document.getElementById("start_button").addEventListener("click", (e) => {
     var company_name = document.getElementById("bus_company_name").value
     var interval_time = document.getElementById("interval_time").value
 
-    // const pattern = /^(https|http):\/\/([a-z]{1,}\.|)(qiita\.com)(\/(.*)|\?(.*)|$)$/g;
-
-    if (RT_URL && zip_path && company_name && Number(interval_time) < 15) {
-        window.api.set_RT_URL(RT_URL)
+    if (RT_URL && zip_path && company_name && Number(interval_time) >= 15) {
+        window.api.add_RT_data({
+            "RT_URL": RT_URL,
+            "zip_path": zip_path,
+            "company_name": company_name,
+            "interval_time": interval_time
+        })
         window.close();
     }
 

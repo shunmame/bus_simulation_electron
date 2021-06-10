@@ -3,11 +3,12 @@ window.api.on("send_RT_data", (arg) => {
 });
 
 window.api.on("start_update", (arg) => {
-    setInterval(update_gtfs_realtime, 15000);
+    console.log(arg)
+    setInterval(update_gtfs_realtime, Number(arg["interval_time"]) * 1000, arg["RT_URL"]);
 });
 
-function update_gtfs_realtime() {
-    window.api.update_marker();
+function update_gtfs_realtime(RT_URL) {
+    window.api.update_marker(RT_URL);
     console.log("update")
 }
 

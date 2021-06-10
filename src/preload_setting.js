@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld(
     "api", {
     // 受信
-    set_RT_URL: (arg) => ipcRenderer.send("set_RT_URL", arg),
+    add_RT_data: (arg) => ipcRenderer.send("add_RT_data", arg),
     send_gtfs_zip: () => ipcRenderer.send("send_gtfs_zip"),
 
     //送信
