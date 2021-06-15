@@ -17,7 +17,6 @@ window.api.on("start_update", (arg) => {
 
     var child_tab_a = document.createElement("a")
     child_tab_a.classList.add("nav-link")
-    // child_tab_a.classList.add("active")
     child_tab_a.setAttribute("id", "item" + String(tab_count + 1) + "-tab")
     child_tab_a.setAttribute("data-toggle", "tab")
     child_tab_a.setAttribute("href", "#item" + String(tab_count + 1))
@@ -46,6 +45,58 @@ window.api.on("start_update", (arg) => {
 
     child_content_div.appendChild(content_table)
     tab_content.appendChild(child_content_div)
+
+    // 表示・非表示作成
+    var tab1 = document.getElementById("item1")
+    // table作成
+    var visible_table = document.createElement("table")
+    // 会社名作成
+    var header_tr = document.createElement("tr")
+    header_tr.setAttribute("align", "center")
+    var header_th = document.createElement("th")
+    header_th.setAttribute("colspan", "2")
+    header_th.innerText = arg["company_name"]
+    header_tr.appendChild(header_th)
+    visible_table.appendChild(header_tr)
+    // チェックボックスの行
+    var checkbox_tr = document.createElement("tr")
+    checkbox_tr.setAttribute("align", "center")
+    // バス停セル
+    var bus_stop_td = document.createElement("td")
+    bus_stop_td.setAttribute("width", "300")
+    // バス停チェックボックス
+    var bus_stop_label = document.createElement("label")
+    var bus_stop_t = document.createElement("t")
+    bus_stop_t.innerText = "バス停"
+    var bus_stop_checkbox = document.createElement("input")
+    bus_stop_checkbox.setAttribute("type", "checkbox")
+    bus_stop_checkbox.setAttribute("class", "checkbox")
+    var bus_stop_span = document.createElement("span")
+    bus_stop_span.setAttribute("class", "checkbox-fontas")
+    bus_stop_label.appendChild(bus_stop_checkbox)
+    bus_stop_label.appendChild(bus_stop_span)
+    bus_stop_label.appendChild(bus_stop_t)
+    bus_stop_td.appendChild(bus_stop_label)
+    checkbox_tr.appendChild(bus_stop_td)
+    // リアルタイムセル
+    var realtime_td = document.createElement("td")
+    realtime_td.setAttribute("width", "300")
+    // リアルタイムチェックボックス
+    var realtime_label = document.createElement("label")
+    var realtime_t = document.createElement("t")
+    realtime_t.innerText = "リアルタイム"
+    var realtime_checkbox = document.createElement("input")
+    realtime_checkbox.setAttribute("type", "checkbox")
+    realtime_checkbox.setAttribute("class", "checkbox")
+    var realtime_span = document.createElement("span")
+    realtime_span.setAttribute("class", "checkbox-fontas")
+    realtime_label.appendChild(realtime_checkbox)
+    realtime_label.appendChild(realtime_span)
+    realtime_label.appendChild(realtime_t)
+    realtime_td.appendChild(realtime_label)
+    checkbox_tr.appendChild(realtime_td)
+    visible_table.appendChild(checkbox_tr)
+    tab1.appendChild(visible_table)
 });
 
 function update_gtfs_realtime(RT_URL) {

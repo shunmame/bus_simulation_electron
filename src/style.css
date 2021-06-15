@@ -44,7 +44,7 @@ body {
 [id$="-table"] {
     display: block;
     overflow-y: scroll;
-    height: 760px;
+    height: 740px;
     border-collapse: collapse;
 }
 
@@ -55,4 +55,31 @@ body {
     background: white;
     border-top:#FFFFFF;
     width: 38%;
+}
+
+.checkbox {
+  display: none;
+}
+.checkbox-fontas {
+  position: relative;
+  vertical-align: middle;
+  /* font-size: 21px; */
+}
+.checkbox + .checkbox-fontas:before {
+  font-weight: 900;
+  font-family: "Font Awesome 5 Free";
+  content: '\f06e';
+  color: #808080;
+}
+.checkbox:checked + .checkbox-fontas:before {
+  color: #808080;
+  content: '\f070';
+}
+
+#tab-content {
+    padding-top: 10px;
+}
+
+#tabs {
+    padding-top: 10px;
 }
