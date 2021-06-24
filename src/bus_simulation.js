@@ -71,6 +71,8 @@ window.api.on("start_update", (arg) => {
     var bus_stop_checkbox = document.createElement("input")
     bus_stop_checkbox.setAttribute("type", "checkbox")
     bus_stop_checkbox.setAttribute("class", "checkbox")
+    bus_stop_checkbox.setAttribute("id", "item" + String(tab_count + 1) + "-stop")
+    bus_stop_checkbox.setAttribute("onchange", "change_show_hidden()")
     var bus_stop_span = document.createElement("span")
     bus_stop_span.setAttribute("class", "checkbox-fontas")
     bus_stop_label.appendChild(bus_stop_checkbox)
@@ -88,6 +90,8 @@ window.api.on("start_update", (arg) => {
     var realtime_checkbox = document.createElement("input")
     realtime_checkbox.setAttribute("type", "checkbox")
     realtime_checkbox.setAttribute("class", "checkbox")
+    realtime_checkbox.setAttribute("id", "item" + String(tab_count + 1) + "-realtime")
+    realtime_checkbox.setAttribute("onchange", "change_show_hidden()")
     var realtime_span = document.createElement("span")
     realtime_span.setAttribute("class", "checkbox-fontas")
     realtime_label.appendChild(realtime_checkbox)
@@ -143,5 +147,16 @@ function show_gtfs_realtime_table([RT_URL, RT_data]) {
         tr.appendChild(td)
 
         table.appendChild(tr)
+    }
+}
+
+function change_show_hidden() {
+    var obj = event.target
+    // console.log(obj.id)
+    var markers = document.querySelectorAll("div#" + obj.id)
+    for (var i = 0; i < markers.length; i++) {
+        console.log(markers[i])
+        if (markers[i].style.visibility == "visible" || !markers[i].style.visibility) markers[i].style.visibility = "hidden"
+        else if (markers[i].style.visibility == "hidden") markers[i].style.visibility = "visible"
     }
 }

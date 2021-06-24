@@ -1,12 +1,13 @@
 const { contextBridge, ipcRenderer } = require("electron");
-var sqlite3 = require("sqlite3").verbose();
-var db = new sqlite3.Database(__dirname + "/sqlite_db/unobusDB.db");
+// var sqlite3 = require("sqlite3").verbose();
+// var db = new sqlite3.Database(__dirname + "/sqlite_db/unobusDB.db");
 var GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 var request = require('request');
 const log = require('electron-log');
 
 var realtime_marker_dict = {}
-var stops_list
+var input_order = []
+// var stops_list
 
 window.onload = () => {
     show_map()
@@ -27,9 +28,11 @@ contextBridge.exposeInMainWorld(
 ipcRenderer.on('close_child_win', async (event, message) => {
     RT_info = await ipcRenderer.invoke("get_new_RT_info");
     if (RT_info) {
-        stops_list = await ipcRenderer.invoke("get_stops_list", RT_info["zip_path"])
+        var stops_list = await ipcRenderer.invoke("get_stops_list", RT_info["zip_path"])
         ipcRenderer.send("start_update", RT_info);
-        plot_stops_from_list()
+        realtime_marker_dict[RT_info["RT_URL"]] = []
+        input_order.push(RT_info["RT_URL"])
+        plot_stops_from_list(stops_list)
         show_gtfs_realtime(RT_info["RT_URL"])
     }
 })
@@ -54,22 +57,25 @@ function plot_stops_db() {
     db.close()
 }
 
-function plot_stops_from_list() {
+function plot_stops_from_list(stops_list) {
     const redMarker = { icon: L.divIcon({ className: 'red marker', iconSize: [10, 10] }) }
-
+    var marker_id_name = "item" + String(Object.keys(realtime_marker_dict).length + 1) + "-stop"
     stops_list.forEach(function (row) {
         var Keys = Object.keys(row)
         if (row[Keys[4]] && row[Keys[5]] && row[Keys[2]]) {
             var stop_lat = Number(row[Keys[4]].replace(/[\"]/g, ""))
             var stop_lon = Number(row[Keys[5]].replace(/[\"]/g, ""))
             var stop_name = row[Keys[2]].replace(/[\"]/g, "")
-            L.marker([stop_lat, stop_lon], redMarker).addTo(map).bindPopup(stop_name)
+            var marker = L.marker([stop_lat, stop_lon], redMarker).addTo(map).bindPopup(stop_name)
+            marker._icon.id = marker_id_name
         }
     })
 }
 
 function show_gtfs_realtime(RT_URL) {
     const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
+    // このままだと全て同じidになってしまう。更新される時に古いほうのidが新しく変わる。
+    var marker_id_name = "item" + String(input_order.indexOf(RT_URL) + 2) + "-realtime"
     var requestSettings = {
         method: 'GET',
         url: RT_URL,
@@ -82,6 +88,7 @@ function show_gtfs_realtime(RT_URL) {
             feed.entity.forEach(function (entity) {
                 if (entity.vehicle) {
                     realtime_marker = L.marker([entity.vehicle.position.latitude, entity.vehicle.position.longitude], blueMarker).addTo(map).bindPopup("BUS")//.openPopup()
+                    realtime_marker._icon.id = marker_id_name
                     realtime_markers.push(realtime_marker)
                 }
             });
