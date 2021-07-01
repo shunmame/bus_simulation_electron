@@ -83,3 +83,7 @@ body {
 #tabs {
     padding-top: 10px;
 }
+
+.checked-marker {
+    visibility: hidden;
+}

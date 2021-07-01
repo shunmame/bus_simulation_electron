@@ -71,7 +71,7 @@ window.api.on("start_update", (arg) => {
     var bus_stop_checkbox = document.createElement("input")
     bus_stop_checkbox.setAttribute("type", "checkbox")
     bus_stop_checkbox.setAttribute("class", "checkbox")
-    bus_stop_checkbox.setAttribute("id", "item" + String(tab_count + 1) + "-stop")
+    bus_stop_checkbox.setAttribute("id", "item" + String(tab_count + 1) + "-stop-checkbox")
     bus_stop_checkbox.setAttribute("onchange", "change_show_hidden()")
     var bus_stop_span = document.createElement("span")
     bus_stop_span.setAttribute("class", "checkbox-fontas")
@@ -90,7 +90,7 @@ window.api.on("start_update", (arg) => {
     var realtime_checkbox = document.createElement("input")
     realtime_checkbox.setAttribute("type", "checkbox")
     realtime_checkbox.setAttribute("class", "checkbox")
-    realtime_checkbox.setAttribute("id", "item" + String(tab_count + 1) + "-realtime")
+    realtime_checkbox.setAttribute("id", "item" + String(tab_count + 1) + "-realtime-checkbox")
     realtime_checkbox.setAttribute("onchange", "change_show_hidden()")
     var realtime_span = document.createElement("span")
     realtime_span.setAttribute("class", "checkbox-fontas")
@@ -104,7 +104,11 @@ window.api.on("start_update", (arg) => {
 });
 
 function update_gtfs_realtime(RT_URL) {
-    window.api.update_marker(RT_URL);
+    realtime_checkbox = document.getElementById(company_id_dict[RT_URL] + "-realtime-checkbox")
+    var is_checked = false
+    if (!realtime_checkbox || !realtime_checkbox.checked) is_checked = false
+    else is_checked = true
+    window.api.update_marker({ "RT_URL": RT_URL, "realtime_check": is_checked });
     console.log("update")
 }
 
@@ -113,7 +117,6 @@ document.getElementById("add_gtfs_button").addEventListener("click", (e) => {
 });
 
 function show_gtfs_realtime_table([RT_URL, RT_data]) {
-    console.log(company_id_dict[RT_URL])
     var table = document.getElementById(company_id_dict[RT_URL] + "-table")
 
     while (table.firstChild) {
@@ -152,11 +155,9 @@ function show_gtfs_realtime_table([RT_URL, RT_data]) {
 
 function change_show_hidden() {
     var obj = event.target
-    // console.log(obj.id)
-    var markers = document.querySelectorAll("div#" + obj.id)
+    var marker_id = obj.id.split("-")[0] + "-" + obj.id.split("-")[1]
+    var markers = document.querySelectorAll("div#" + marker_id)
     for (var i = 0; i < markers.length; i++) {
-        console.log(markers[i])
-        if (markers[i].style.visibility == "visible" || !markers[i].style.visibility) markers[i].style.visibility = "hidden"
-        else if (markers[i].style.visibility == "hidden") markers[i].style.visibility = "visible"
+        markers[i].classList.toggle("checked-marker")
     }
 }

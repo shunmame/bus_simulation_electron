@@ -8,7 +8,6 @@ require('electron-reload')(__dirname, {
 });
 
 var mainWindow, subWindow;
-var stopsList = []
 var tmp_GtfsRTData
 var gtfsRTDataList = []
 var staticGtfsDataDict = {}
@@ -89,6 +88,7 @@ function convert_stops_for_plot(stopsData) {
     var buf = new Buffer.from(stopsData, 'binary');
     var retStr = iconv.decode(buf, "utf8");
     var columns
+    var stopsList = []
     retStr.split("\n").forEach(function (row, index) {
         if (index == 0) {
             columns = row.split(",")

@@ -33,7 +33,7 @@ ipcRenderer.on('close_child_win', async (event, message) => {
         realtime_marker_dict[RT_info["RT_URL"]] = []
         input_order.push(RT_info["RT_URL"])
         plot_stops_from_list(stops_list)
-        show_gtfs_realtime(RT_info["RT_URL"])
+        show_gtfs_realtime({ "RT_URL": RT_info["RT_URL"], "realtime_check": false })
     }
 })
 
@@ -72,15 +72,17 @@ function plot_stops_from_list(stops_list) {
     })
 }
 
-function show_gtfs_realtime(RT_URL) {
-    const blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
-    // このままだと全て同じidになってしまう。更新される時に古いほうのidが新しく変わる。
-    var marker_id_name = "item" + String(input_order.indexOf(RT_URL) + 2) + "-realtime"
+function show_gtfs_realtime(args) {
+    if (!args["realtime_check"]) var blueMarker = { icon: L.divIcon({ className: 'blue marker', iconSize: [10, 10] }) }
+    else var blueMarker = { icon: L.divIcon({ className: 'blue marker checked-marker', iconSize: [10, 10] }) }
+
+    var marker_id_name = "item" + String(input_order.indexOf(args["RT_URL"]) + 2) + "-realtime"
     var requestSettings = {
         method: 'GET',
-        url: RT_URL,
+        url: args["RT_URL"],
         encoding: null
     };
+
     request(requestSettings, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             var feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
@@ -92,17 +94,16 @@ function show_gtfs_realtime(RT_URL) {
                     realtime_markers.push(realtime_marker)
                 }
             });
-            realtime_marker_dict[RT_URL] = realtime_markers
-            ipcRenderer.send("get_RT_data", [RT_URL, feed]);
+            realtime_marker_dict[args["RT_URL"]] = realtime_markers
+            ipcRenderer.send("get_RT_data", [args["RT_URL"], feed]);
         }
     });
 }
 
-function update_gtfs_realtime(RT_URL) {
-    console.log(realtime_marker_dict)
-    for (let i = 0; i < realtime_marker_dict[RT_URL].length; i++) {
-        map.removeLayer(realtime_marker_dict[RT_URL][i])
+function update_gtfs_realtime(args) {
+    for (let i = 0; i < realtime_marker_dict[args["RT_URL"]].length; i++) {
+        map.removeLayer(realtime_marker_dict[args["RT_URL"]][i])
     }
-    realtime_marker_dict[RT_URL] = []
-    show_gtfs_realtime(RT_URL)
+    realtime_marker_dict[args["RT_URL"]] = []
+    show_gtfs_realtime(args)
 }
