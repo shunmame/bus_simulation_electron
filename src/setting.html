@@ -20,7 +20,19 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <label>GTFS Realtime URL</label>
+                <p>バス会社名&nbsp;&nbsp;(必須)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p id="validate_name" class="validate_txt">入力してください</p>
+                <input type="text" id="bus_company_name" placeholder="〇〇バス" class="form-control">
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="row">
+            <div class="col">
+                <p>GTFS Realtime URL&nbsp;&nbsp;(必須)</p>
             </div>
         </div>
         <div class="row">
@@ -30,10 +42,23 @@
                     class="form-control">
             </div>
         </div>
+        <div class="row">
+            <div class="col-7">
+                <p id="validate_time" class="validate_txt">15秒以上にしてくだい</p>
+                <p>何秒間隔で取得しますか?&nbsp;&nbsp;(必須)</p>
+                <p style="font-size: 13px;">※15秒以上にしてください<br>&nbsp;&nbsp;間隔については各社の指示にしたがってください</p>
+            </div>
+            <div class="col-3" style="padding-top: 15px;">
+                <input type="number" id="interval_time" value="15" class="form-control">
+            </div>
+            <div class="col-2" style="padding-top: 22px;">
+                <p class="text-center RT_vcenter">秒</p>
+            </div>
+        </div>
         <div class="spacer"></div>
         <div class="row">
             <div class="col">
-                <label>GTFS Static Zip File</label>
+                <p>GTFS Static Zip File&nbsp;&nbsp;(必須)</p>
             </div>
         </div>
         <div class="row">
@@ -45,7 +70,6 @@
                 <button id="file_open_button" type="button" class="text-center">参照</button>
             </div>
         </div>
-        <div class="spacer"></div>
     </div>
     <footer>
         <input type="button" value="開始" id="start_button" style="width:100%">

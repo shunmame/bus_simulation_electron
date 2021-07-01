@@ -34,24 +34,56 @@ body {
     top: 0;
     width: calc(100% - 720px);
     height: 100%;
+    padding: 10px;
 }
 
 #entity_table {
     margin-top: 10px;
 }
 
-#entity_table {
+[id$="-table"] {
     display: block;
     overflow-y: scroll;
-    height: 790px;
+    height: 740px;
     border-collapse: collapse;
 }
 
-#entity_table thead th {
+[id$="-table"] thead th {
     position: sticky;
     top: 0;
     z-index: 1;
     background: white;
     border-top:#FFFFFF;
     width: 38%;
+}
+
+.checkbox {
+  display: none;
+}
+.checkbox-fontas {
+  position: relative;
+  vertical-align: middle;
+  /* font-size: 21px; */
+}
+.checkbox + .checkbox-fontas:before {
+  font-weight: 900;
+  font-family: "Font Awesome 5 Free";
+  content: '\f06e';
+  color: #808080;
+}
+.checkbox:checked + .checkbox-fontas:before {
+  color: #808080;
+  content: '\f070';
+}
+
+#tab-content {
+    padding-top: 10px;
+}
+
+#tabs {
+    padding-top: 10px;
+}
+
+.checked-marker {
+    visibility: hidden;
 }
